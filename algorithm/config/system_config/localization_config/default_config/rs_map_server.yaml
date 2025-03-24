@@ -1,0 +1,7 @@
+type: RSMapServer 
+
+height_search_radius: 10.0
+map_cell_length: 0.15
+local_map_radius: 80
+t_dis_update_localmap: 10
+lidar_height_from_ground: 2

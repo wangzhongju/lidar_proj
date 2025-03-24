@@ -1,0 +1,22 @@
+###############################################################
+#####################   DO NOT EDIT !!!!  #####################
+###############################################################
+# Common
+common:
+  queue_size: 100
+  inter_message_lower_bound: 0.045
+  lidar_fusion: false
+  calibration:
+    include: /usr_config/calibration.yaml             # (string) The name of the calibration file
+
+motion_compensation:
+  enable: false
+  lidar_type: Mems             # Mems or Mechnical
+  compensation_type: BackCompensation   # BackCompensation or FrontCompensation
+
+check_sensor_offline:
+  enable: false
+  check_time: 5000      # unit: ms   time for checking whether sensor is offline or not
+  send_freq: 10         # hz  generate null data frequency
+
+

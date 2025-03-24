@@ -1,0 +1,6 @@
+name: RegistraTransRotateSampler
+transform_map: false
+num_of_rotate: 100
+rotate_delta: 0
+num_of_trans: 1  #original: 4
+trans_delta: 1.0

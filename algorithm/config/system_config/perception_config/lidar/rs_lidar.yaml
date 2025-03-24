@@ -1,0 +1,128 @@
+#* Common *#
+common:
+  data_fusion: true  # 在usr_config.yaml中配置即可。
+  preprocessing:
+    DramaPreprocessing:
+      vehicle_filter:
+        enable: true
+        xmin: -1.
+        xmax: 2.4
+        ymin: -2.
+        ymax: 2.
+        zmin: -2.
+        zmax: 2.
+#* MultiLidar *#  多雷达感知相关配置
+sub:
+  - config:
+    include: /system_config/perception_config/lidar/middle_lidar/lidar.yaml
+  - config:
+    include: /system_config/perception_config/lidar/left_lidar/lidar.yaml
+  - config:
+    include: /system_config/perception_config/lidar/right_lidar/lidar.yaml
+  - config:
+    include: /system_config/perception_config/lidar/back_lidar/lidar.yaml
+#* PostFusion *#
+post_fusion:
+  strategy: "MonkeyPostFusion"
+  MonkeyPostFusion:
+    iou_thre: 0.1
+    reg_box: true
+    box_size_check: true
+#
+##* RefineFilter *#
+refine_filter:
+  enable: false
+  strategy: "MoffiRefineFilter"
+  MoffiRefineFilter:
+    filter_range:
+      xmin: -60
+      xmax: 100
+      ymin: -60
+      ymax: 60
+      zmin: -0.5
+      zmax: 3
+    bev_grid_size: 0.5  # bev栅格的尺寸
+    height_threshold_for_ground: 0.2  # 地面优化高度阈值
+    height_threshold_for_object: 0.2  # 物体中地面优化高度阈值
+#
+##* BasicDetection *#
+basic_detection:
+  enable: true
+  strategy: "SimbaBasicDetection"
+  SimbaBasicDetection:
+    detect_range:
+      xmin: -100.0
+      xmax: 100.0
+      ymin: -50.0
+      ymax: 50.0
+      zmin: 0.
+      zmax: 3.
+    min_hori_angle: -60  # freespace最小极角
+    max_hori_angle: 60
+
+#
+##* RoadDetection *#
+road_detection:
+  enable: false # 是否开启该功能
+  strategy: "SnakeRoadDetection"
+  SnakeRoadDetection:
+    detect_range:
+      xmin: -10.0
+      xmax: 60.0
+      ymin: -20.0
+      ymax: 20.0
+    display_range:
+      xmin: 0.0
+      xmax: 80
+    grid_size_x: 0.2  # 栅格的大小
+    grid_size_y: 0.2
+    lane_width: 3.2  # 标准车道的宽度
+    ground_fusion_num: 1 #多帧叠加
+    enable_predict: true  # 当点云信息匮乏时，是否预测车道线
+    tracking: true  # 是否对车道线进行追踪
+
+#
+##* Tracking *#
+tracking:
+  enable: true # 是否开启该功能
+  strategy: "PigeonTracking"
+  PigeonTracking:
+    predict_time: 0.5  # 目标的生存时间。当一个目标消失的时间超过设定值时，被认定为为一个新目标。
+    history_num: 10    # 历史数据的缓存帧数
+    basic_velocity_noise: 0.8  # 当目标的速度小于设定值时，被认为速度为0。
+    match_distance_max: 3.0 # 目标关联的最大距离
+    enable_predict_missing: false  # 当目标丢失的时候，是否根据历史数据进行目标补全。
+    enable_bsd_tracking: true  # 是否追踪目标类型为UNKNOWN的目标
+#
+##* Postprocessing *#
+postprocessing:
+  strategy: "EulerPostprocessing"
+  EulerPostprocessing:
+    with_unknown_objects: true
+    barrier_filter: true
+    gps_translate: true
+    gps_type: center  #center/centroid/nearest
+    sequence_fusion: # 序列融合
+      min_hori_angle: -60 #FOV的大小
+      max_hori_angle: 60
+      enable_type_fusion: false  # 是否对目标进行类别纠正
+      enable_box_fusion: false   # 是否优化目标的回归框
+      enable_delay_output: false # 当目标不能够稳定检测时，是否延迟目标的输出
+      enable_refine_orientation: false  # 优化目标的朝向（主要判定目标的朝向是否需要180调转）
+      enable_estimate_object_uncertainty: true  # 计算目标的不确定度
+      enable_dynamic_static_detection: true  # 计算目标的动静态
+      enable_estimate_exist_confidence: true # 计算目标的存在概率
+#
+##* Mirror_detection##
+mirror_detection:
+  enable: true # 是否开启镜像目标检测功能
+  strategy: "PhantomMirrorDetection"
+  PhantomMirrorDetection:
+    range:              # 检测范围
+      xmin: 0
+      xmax: 100
+      ymin: -60
+      ymax: 60
+    shelter_thre_min: 0.8 # 遮挡阈值
+
+

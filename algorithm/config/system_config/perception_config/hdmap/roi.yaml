@@ -1,0 +1,269 @@
+rois:
+  - roi_type: 0
+    filter_type: 0
+    index: 1
+    anchors:
+      -
+        - 113.937
+        - -61.4061
+        - 0
+      -
+        - 115.406
+        - -57.09249
+        - 0
+      -
+        - 47.3269
+        - -35.9545
+        - 0
+      -
+        - 46.1566
+        - -39.8723
+        - 0
+    priority: 0
+    events:
+      LimiteVelocity:
+        velType: 2
+        enable: true
+        velocityThUpper: 10
+        timeThUpper: 3
+        velocityThBottom: 5
+        timeThBottom: 3
+  - index: 2
+    roi_type: 0
+    filter_type: 0
+    anchors:
+      -
+        - 115.6386
+        - -56.85978
+        - 0
+      -
+        - 116.5843
+        - -53.58481
+        - 0
+      -
+        - 48.3054
+        - -32.5344
+        - 0
+      -
+        - 47.3269
+        - -35.9545
+        - 0
+    priority: 0
+    events:
+      AbnormalSwitch:
+        enable: true
+        neighborRoiIds:
+          - id: 3
+            style: 0
+        timeTh: 2
+      LimiteVelocity:
+        enable: true
+        velType: 2
+        velocityThUpper: 11.11111111111111
+        timeThUpper: 1
+        timeThBottom: 1
+        velocityThBottom: 5.555555555555555
+      PedestrianCross:
+        enable: true
+        timeTh: 1
+        directionRoiId: 2
+        directionPoints:
+          - - 5.402937
+            - -7.070818
+            - -0
+          - - 5.402937
+            - 15.76428
+            - 0
+  - index: 3
+    roi_type: 0
+    filter_type: 0
+    anchors:
+      -
+        - 116.817
+        - -53.35217
+        - 0
+      -
+        - 48.3054
+        - -32.5344
+        - 0
+      -
+        - 49.351
+        - -28.9502
+        - 0
+      -
+        - 117.8618
+        - -50.28241
+        - 2.107531
+    priority: 0
+    events:
+      AbnormalSwitch:
+        enable: true
+        neighborRoiIds:
+          - id: 2
+            style: 0
+        timeTh: 2
+      PedestrianCross:
+        enable: true
+        timeTh: 1
+        directionRoiId: 2
+        directionPoints:
+          - - 5.402937
+            - -7.070818
+            - -0
+          - - 5.402937
+            - 15.76428
+            - 0
+  - index: 4
+    roi_type: 0
+    filter_type: 0
+    anchors:
+      -
+        - 119.0544
+        - -46.67036
+        - 9.63112
+      -
+        - 117.939
+        - -50.1272
+        - 1.121741
+      -
+        - 49.351
+        - -28.9502
+        - 0
+      -
+        - 50.435
+        - -25.4624
+        - 0
+    priority: 0
+    events:
+      VehicleReverse:
+        degreeTh: 1.570796326794897
+        enable: true
+        directionRoiId: 7
+        directionPoints:
+          -
+            - 117.1584
+            - -66.71324
+            - 24.4602
+          -
+            - 107.3859
+            - -63.45575
+            - 24.4602
+          -
+            - 61.12946
+            - -50.10002
+            - 24.4602
+      AbnormalStop:
+        enable: true
+        velocityTh: 0.9999999735090468
+        timeTh: 2
+      PedestrianInvade:
+        enable: true
+        timeTh: 2
+      UnknownLoss:
+        timeTh: 2
+        enable: true
+      AbnormlOccupy:
+        enable: true
+        timeTh: 2
+      PedestrianCross:
+        enable: true
+        timeTh: 1
+        directionRoiId: 2
+        directionPoints:
+          - - 5.402937
+            - -7.070818
+            - -0
+          - - 5.402937
+            - 15.76428
+            - 0
+  - index: 5
+    roi_type: 0
+    filter_type: 0
+    anchors:
+      -
+        - 52.31027
+        - -21.15481
+        - -0.02098274
+      -
+        - 73.44777
+        - -27.74219
+        - 0.2267189
+      -
+        - 74.99895
+        - -23.98832
+        - 1.554564
+      -
+        - 53.72186
+        - -17.49917
+        - 0
+    priority: 0
+    events:
+      PedestrianCross:
+        enable: true
+        timeTh: 1
+        directionRoiId: 2
+        directionPoints:
+          - - 5.402937
+            - -7.070818
+            - -0
+          - - 5.402937
+            - 15.76428
+            - 0 #{}
+  - roi_type: 0
+    index: 6
+    filter_type: 0
+    anchors:
+      -
+        - 47.33374
+        - -43.47858
+        - 0
+      -
+        - 48.26445
+        - -43.6337
+        - 0
+      -
+        - 55.55503
+        - -24.78677
+        - 1.068482
+      -
+        - 54.62431
+        - -24.39897
+        - 1.880061
+    priority: 0
+    events:
+      Statistical:
+        timeTh: 4
+        enable: true
+        statMode: 0
+        statLanes:
+          - roiIdx: 1
+            laneIdx: 1
+            direction: 0
+          - roiIdx: 2
+            laneIdx: 2
+            direction: 0
+          - roiIdx: 3
+            laneIdx: 3
+            direction: 0
+          - laneIdx: 4
+            roiIdx: 4
+            direction: 0
+  - index: 7
+    roi_type: 0
+    filter_type: 0
+    anchors:
+      -
+        - 61.13408
+        - -26.22736
+        - 12.2301
+      -
+        - 107.3905
+        - -39.58309
+        - 12.2301
+      -
+        - 117.163
+        - -42.84058
+        - 12.2301
+    priority: 0
+    events:
+      {}

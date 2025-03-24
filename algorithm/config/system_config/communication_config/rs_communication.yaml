@@ -1,0 +1,43 @@
+#* support method: 1.Native 2.NativeBytes 3.Ros 4.RobosenseV2R 5. Websocket 6.Custom*#
+
+# - method: Native
+#   config:
+#    include: /system_config/communication_config/native/config.yaml
+
+# - method: NativeBytes
+#   config:
+#    include: /system_config/communication_config/native_bytes/config_2_x.yaml
+#
+# - method: NativeBytes
+#   config:
+#     include: /system_config/communication_config/native_bytes/config_3_0.yaml
+
+# - method: NativeBytes
+#   config:
+#     include: /system_config/communication_config/native_bytes/config_3_1.yaml
+
+# - method: Ros
+#   config:
+#     include: /system_config/communication_config/ros/config.yaml
+
+# - method: Ros2
+#   config:
+#     include: /system_config/communication_config/ros2/config.yaml
+
+# - method: Proto
+#   config:
+#     include: /system_config/communication_config/proto/config.yaml
+
+# - method: RobosenseV2R
+#   config:
+#     include: /system_config/communication_config/v2r/config.yaml
+
+# - method: Websocket
+#   config:
+#      include: /system_config/communication_config/websocket/config.yaml
+
+- method: Custom
+  config:
+#    include: /system_config/communication_config/custom/config.yaml
+#    include: /system_config/communication_config/custom/config_dtgh.yaml
+    include: /system_config/communication_config/custom/config_xingyun.yaml

@@ -1,0 +1,39 @@
+name: RegularMatcher
+
+matcher:
+  name: KDTreeMatcher
+  knn: 1
+  maxDist: 2.0
+  epsilon: 0.1
+
+outlierFilters:
+  # - 
+  #   name: VarTrimmedDistOutlierFilter
+  #   minRatio: 0.5
+  #   maxRatio: 0.95
+  #   lambda: 0.9
+  # -
+  #   name: SurfaceNormalOutlierFilter
+  #   maxAngle: 1.5
+
+errorMinimizer:
+  name: PointToPlaneErrorMinimizer
+  force2D: 0
+  #sensorStdDev: 1.5
+
+transformationCheckers:
+  # -
+  #   name: DifferentialTransformationChecker
+  #   minDiffRotErr: 0.01
+  #   minDiffTransErr: 0.005
+  #   smoothLength: 1
+  -
+    name: CounterTransformationChecker
+    maxIterationCount: 10
+  # - 
+  #   name: BoundTransformationChecker
+  #   maxRotationNorm: 0.2
+  #   maxTranslationNorm: 10.0
+
+inspector:
+  name: NullInspector

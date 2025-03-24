@@ -1,0 +1,75 @@
+lidar:
+  - parent_frame_id: /base_link
+    frame_id: /middle_lidar
+    device_type: RSHELIOS
+    x: 0
+    y: 0
+    z: 3.256999999999997
+    roll: 0.00139626344
+    pitch: 0.05078908262999991
+    yaw: 0 
+
+  # - parent_frame_id: /middle_lidar
+  #   frame_id: /left_lidar
+  #   device_type: RSM1
+  #   x: 0
+  #   y: 0
+  #   z: 0
+  #   roll: 0.02478367606000001
+  #   pitch: 0.1836086423599998
+  #   yaw: 1.57
+#  - parent_frame_id: /middle_lidar
+#    frame_id: /right_lidar
+#    device_type: RSM1
+#    x: -0.709
+#    y: -0.403
+#    z: -0.12
+#    roll: 0.00837758064
+#    pitch: 0.10088003354
+#    yaw: -1.60081603396
+#  - parent_frame_id: /middle_lidar
+#    frame_id: /back_lidar
+#    device_type: RSM1
+#    x: -1.185
+#    y: 0.116
+#    z: 0.008999999999999999
+#    roll: -0.00401425739
+#    pitch: 0.07347836353000001
+#    yaw: -3.118030794450001
+base:
+  frame_id: /base_link
+
+#odometry:
+#  frame_id: /odometry
+
+
+
+imu:
+  parent_frame_id: /base_link
+  frame_id: /imu
+  x: 0
+  y: 0
+  z: 0
+  roll: 0
+  pitch: 0
+  yaw: 0
+
+gnss:
+  parent_frame_id: /base_link
+  frame_id: /gnss
+  x: 0
+  y: 0
+  z: 0
+  roll: 0
+  pitch: 0
+  yaw: 0
+
+odom:
+  parent_frame_id: /base_link
+  frame_id: /odom
+  x: 0
+  y: 0
+  z: 0
+  roll: 0
+  pitch: 0
+  yaw: 0

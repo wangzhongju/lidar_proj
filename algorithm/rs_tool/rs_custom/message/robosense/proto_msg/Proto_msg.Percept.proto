@@ -1,0 +1,311 @@
+syntax = "proto2";
+package robosense.perception.Proto_msg;
+
+// ============= basic data struct ===============// 
+enum ObjectType
+{
+    OBJECT_UNKNOWN = 0;
+    OBJECT_PED = 1;
+    OBJECT_BIC = 2;
+    OBJECT_CAR = 3;
+    OBJECT_TRUCK_BUS = 4;
+    OBJECT_ULTRA_VEHICLE = 5;
+    OBJECT_CONE = 6;
+    OBJECT_MAX_OBJ_TYPE_NUM = 7;
+}
+
+enum MotionType {
+    MOTION_UNKNOWN = 0;
+    MOTION_MOVING = 1;
+    MOTION_MOVABLE = 2;
+    MOTION_STATIONARY = 3;
+    MOTION_MAX_MOTION_STATE_NUM = 4;
+}
+
+enum SizeType {
+    SIZE_SMALL = 0;
+    SIZE_MEDIUM = 1;
+    SIZE_LARGE = 2;
+    SIZE_MAX_SIZE_TYPE_NUM = 3;
+}
+
+enum ModeType {
+    MODE_BSD = 1;    // means the result come from tradition method
+    MODE_FOCUS = 2;  // means the result come from deep method
+    MODE_PREDICT = 3;  // means the object come from predict from squence
+}
+
+enum TrackingState {
+    TRACK_UNKNOWN = 0;
+    TRACK_INIT = 1;
+    TRACK_STABLE = 2;
+    TRACK_PREDICTION = 3;
+    };
+
+enum AttentionType {
+    ATTENTION_NONE      = 0;
+    ATTENTION_ATTENTION = 1;
+}
+
+enum GpsType {
+    GPS_CENTER = 0;
+    GPS_CENTROID = 1;
+    GPS_NEAREST = 2;
+}
+
+enum FreeSpaceType {
+    FREE_STATIONARY = 0;
+    FREE_DYNAMIC = 1;
+    FREE_UNKNOWN = 2;
+}
+
+enum RoadedgePosition {
+    ROAD_LEFT = 1;
+    ROAD_UNKNOWN = 0;
+    ROAD_RIGHT = -1;
+}
+
+enum LanePosition {
+    LANE_UNKNOWN = 7;
+    LANE_LEFT_SIXTH = 6;
+    LANE_LEFT_FIFTH = 5;
+    LANE_LEFT_FOURTH = 4;
+    LANE_LEFT_THIRD = 3;
+    LANE_LEFT_ADJACENT = 2;
+    LANE_LEFT_EGO = 1;
+    LANE_EGO_LANE = 0;
+    LANE_RIGHT_EGO = -1;
+    LANE_RIGHT_ADJACENT = -2;
+    LANE_RIGHT_THIRD = -3;
+    LANE_RIGHT_FOURTH = -4;
+    LANE_RIGHT_FIFTH = -5;
+    LANE_RIGHT_SIXTH = -6;
+    LANE_OFF_DRIVABLE = -7;
+}
+
+enum MeasureStatus {
+    ROAD_DETECTION  = 0;
+    ROAD_PREDICTION = 1;
+}
+
+//enum IndiceType {
+//    NON_GROUND_PT_IDX = 0;
+//    GROUND_PT_IDX     = 1;
+//    BACKGROUND_PT_IDX = 2;
+//}
+
+message Point2f {
+    repeated float data = 1;
+}
+
+message Point3f {
+    repeated float data = 1;
+}
+
+message Point3d{
+    repeated double data = 1;
+}
+
+message PointXYZITL{
+    optional float  x           = 1;
+    optional float  y           = 2;
+    optional float  z           = 3;
+    optional uint32 intensity   = 4;
+    optional double timestamp   = 5;
+    optional int32  label       = 6;
+}
+
+message Vector1i{
+    repeated int32 data = 1;
+}
+
+message Vector1f{
+    repeated float data = 1;
+}
+
+message Vector3f{
+    repeated Point3f data = 1;
+}
+
+message VectorObjType{
+    repeated ObjectType data = 1;
+}
+
+// ---------------------------------------------- global_pose_ptr --------------------------------------- //
+// ================= Pose ===================//
+message Pose {
+    optional float x     = 1;
+    optional float y     = 2;
+    optional float z     = 3;
+    optional float roll  = 4;
+    optional float pitch = 5;
+    optional float yaw   = 6;
+}
+
+message PoseInfo {
+    optional double timestamp = 1;
+    optional Pose   pose      = 2;
+}
+
+// ---------------------------------------------- freespace_ptr --------------------------------------- //
+// ================= FreeSpaces ============== //
+message VectorFreeSpaceType{
+    repeated FreeSpaceType data = 1;
+}
+
+message FreeSpaces {
+    optional double              timestamp      = 1; // timestamp
+    optional Vector3f            fs_pts         = 2;
+    optional Vector1f            fs_confidence  = 3;
+    optional VectorFreeSpaceType fs_types       = 4;
+}
+
+// ---------------------------------------------- objects --------------------------------------- //
+// ================= SupplementInfos ============ //
+message SupplementInfos{
+    optional int32         unique_id              = 1;
+    optional Vector3f      polygon                = 2;
+    optional int32         left_point_index       = 3;
+    optional int32         right_point_index      = 4;
+    optional Vector1f      latent_types           = 5;
+    optional SizeType      size_type              = 6;
+    optional ModeType      mode                   = 7;
+    optional bool          in_roi                 = 8;
+    optional TrackingState tracking_state         = 9;
+    optional Point3f       geo_center             = 10;
+    optional Point3f       geo_size               = 11;
+    optional Vector3f      trajectory             = 12;
+    optional Vector3f      history_velocity       = 13;
+    optional VectorObjType history_type           = 14;
+    optional GpsType       gps_mode               = 15;
+    optional Point3d       gps_info               = 16;
+}
+
+// ================= CoreInfos =============== //
+message CoreInfos {
+    optional double         timestamp               = 1;
+    optional int32          priority_id             = 2;
+    optional float          existence_confidence    = 3;
+    optional Point3f        center                  = 4;
+    optional Point3f        center_cov              = 5;
+    optional Point3f        size                    = 6;
+    optional Point3f        size_cov                = 7;
+    optional Point3f        direction               = 8;
+    optional Point3f        direction_cov           = 9;
+    optional ObjectType     type                    = 10;
+    optional float          type_confidence         = 11;
+    optional AttentionType  attention_type          = 12;
+    optional MotionType     motion_state            = 13;
+    optional LanePosition   lane_pos                = 14;
+    optional int32          tracker_id              = 15;
+    optional double         age                     = 16;
+    optional Point3f        velocity                = 17;
+    optional Point3f        velocity_cov            = 18;
+    optional Point3f        acceleration            = 19;
+    optional Point3f        acceleration_cov        = 20;
+    optional float          angle_velocity          = 21;
+    optional float          angle_velocity_cov      = 22;
+    optional float          angle_acceleration      = 23;
+    optional float          angle_acceleration_cov  = 24;
+    optional Point3f        anchor                  = 25;
+    optional Point3f        nearest_point           = 26;
+}
+
+// =================== Object ================ //
+message Object{
+    optional double          timestamp        = 1;
+    optional CoreInfos       core_infos       = 2;
+    optional SupplementInfos supplement_infos = 3;
+}
+
+// ---------------------------------------------- lanes --------------------------------------- //
+// ================== Lanes ================== //
+message EndPoints{
+    optional Point2f start = 1;
+    optional Point2f end   = 2;
+}
+
+message Curve{
+    optional float x_start = 1;
+    optional float x_end   = 2;
+    optional float a       = 3;
+    optional float b       = 4;
+    optional float c       = 5;
+    optional float d       = 6;
+}
+
+message Lane{
+    optional EndPoints      end_point           = 1;
+    optional MeasureStatus  measure_status      = 2;
+    optional LanePosition   lane_id             = 3;
+    optional Curve          curve               = 4;
+    optional float          confidence          = 5;
+//    optional int32          type                = 6;
+//    optional float          ego_lane_width      = 7;
+//    optional float          dotted_line_gap_len = 8;
+//    optional float          lane_line_width     = 9;
+//    optional Point2f        lane_start          = 10;
+//    optional Point2f        lane_end            = 11;
+//    optional Point2f        predict_lane_start  = 12;
+//    optional Point2f        predict_lane_end    = 13;
+//    optional Vector3f       control_points      = 14;
+}
+
+message Lanes{
+    optional double timestamp = 1;
+    repeated Lane   lanes     = 2;
+}
+
+// ---------------------------------------------- roadedges --------------------------------------- //
+// =================== RoadEdge =============== //
+
+message RoadEdge{
+    optional EndPoints          end_points          = 1;
+    optional MeasureStatus      measure_status      = 2;
+    optional RoadedgePosition   roadedge_id         = 3;
+    optional Curve              curve               = 4;
+    optional float              confidence          = 5;
+//    optional int32              road_type           = 6;
+//    optional Point2f            road_start          = 7;
+//    optional Point2f            road_end            = 8;
+//    optional Point2f            predict_road_start  = 9;
+//    optional Point2f            predict_road_end    = 10;
+//    optional Vector3f           control_points      = 11;
+}
+
+message RoadEdges {
+    optional double     timestamp = 1;
+    repeated RoadEdge   roadedges = 2;
+}
+
+// ---------------------------------------------- non_ground/ground/background_indices --------------------------------------- //
+// ================= Indices: Diffirent IndiceType ================ //
+//message Indices{
+//    optional double     timestamp   = 1;
+//    optional IndiceType indice_type = 2;
+//    optional Vector1i   indices     = 3;
+//}
+
+// ---------------------------------------------- scan_ptr --------------------------------------- //
+// ================= Points ===================== //
+message PointCloud{
+    optional double       timestamp   = 1;
+    repeated PointXYZITL  point       = 2;
+}
+
+// ---------------------------------------------- Message Header --------------------------------------- //
+message MsgHeader {
+    optional double msgTimestamps = 1;
+    optional uint32 msgVersion = 2;
+    optional uint32 msgType = 3;
+    optional uint32 deviceId = 4;
+    optional uint32 msgFrameId = 5;
+    optional uint32 msgTotalCnt = 6;
+    optional uint32 msgLocalCnt = 7;
+    optional uint32 msgLocalLen = 8;
+    optional uint32 msgIndex = 9;
+    optional uint32 msgTotalFragment = 10;
+    optional uint32 msgFragmentIndex = 11;
+    optional uint32 msgRes0 = 12;
+    optional uint32 msgCheck16 = 13;
+}

@@ -1,0 +1,26 @@
+#* General *#
+general:
+  device_id: 0
+socket:
+  socket_address: 192.168.1.22 #10.10.8.239   # 对于发送端为远端的IP, 对于接收端建议配置为0.0.0.0
+  socket_port: 6000 #60082            # 对于发送端为远端的端口, 对于接收端为监听的端口
+  socket_buffer_size: 4194304   # 默认即可
+  max_msg_size: 32768           # 不允许大于63KByte,默认为32KByte
+  timeout_ms: 150               # 接收超时，默认150ms
+  send_control:
+    send_control_enable: true          # 如果发送点云时，该选项建议开启
+    send_control_thres: 262144         # 默认为256KB
+    send_control_ms: 2                 # 默认为2ms,建议 <= 4
+    send_control_compress_enable: true # 如果发送点云时，该选项建议开启
+  receive_control:
+    receive_io_parallel_enable: true      # 如果发送点云，建议开启
+    receive_io_parallel_degree: 4         # 根据机器设备配置，例如4核,建议配置不超过4
+    receive_process_parallel_enable: true # 如果发送点云，建议开启
+native:
+  custom_method: Dtgh_1
+  send_object: true
+  send_event: true
+  send_traffic: true
+
+
+

@@ -1,0 +1,7 @@
+streams:
+  - name: camera_30
+    url: "rtsp://admin:aa123456@192.168.5.30"
+  # - name: camera_31
+  #   url: "rtsp://admin:aa123456@192.168.5.31"
+  #- name: camera_3
+  #  url: "/workspace/data/test5.mp4"

@@ -1,0 +1,5 @@
+<launch>
+  <node name="rtsp_streamer_node" pkg="my_rtsp_streamer" type="rtsp_streamer_node" output="screen">
+    <param name="config_file" value="$(find my_rtsp_streamer)/config/streams.yaml"/>
+  </node>
+</launch>

@@ -1,0 +1,38 @@
+# yaml
+name: LidarEsObserver # observer must specify a predefined name
+type: Correction # observer type: Prediction or Correction
+
+only_correct_xy_yaw: false
+add_motion_vel_constraint: false
+odom_vel_constraint_noise: 1e-3 # the smaller this parameter the smoother the path. 
+                                # while it will cause the rotation error if H matrix in 
+                                # Lidar es Observer deviration of rotation is not zero
+point_cloud_range: 200
+heading_position_noise: 1e-3 # Lidar position measurement noise along forward direction
+side_position_noise: 1e-3 # Lidar position measurement noise orthogonal to forward direction
+angle_noise: 1e-3 # Lidar orientation(2D) measurement noise
+
+lidare_failure_threshold: 5.0 # Unit: sec
+
+registration_process: # configuration of the Lidar registration process
+  # yaml
+  name: LidarRegitraRegular
+
+  point_filter:
+    name: CustomPointFilter
+    use_default: false
+    filter_chain:
+      include: /system_config/localization_config/default_config/PointFilter/regular_registra_point_filter.yaml
+
+  sampler:
+    name: RegistraNullSampler
+    transform_map: false
+
+  pre_matcher: 
+    name: NullPreMatcher
+
+  matcher: 
+    include: /system_config/localization_config/default_config/Matcher/regular_matcher.yaml
+
+  evaluator: 
+    name: RegistraNullEvaluator

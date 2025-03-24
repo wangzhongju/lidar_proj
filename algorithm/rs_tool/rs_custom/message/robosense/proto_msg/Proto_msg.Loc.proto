@@ -1,0 +1,79 @@
+syntax = "proto2";
+package robosense.localization.Proto_msg;
+
+// ================= Basic type ===================//
+message Vector1d{
+    repeated double data = 1;
+}
+
+message PointXYZIT{
+    optional float  x           = 1;
+    optional float  y           = 2;
+    optional float  z           = 3;
+    optional uint32 intensity   = 4;
+    optional double timestamp   = 5;
+}
+
+// ================= Status ===================//
+message Status {
+    optional uint32 status_int     = 1;
+}
+
+// ================= Process lidar Message ===================//
+message ProcessLidar {
+    optional double timestamp           = 1;
+    optional uint32 seq                 = 2;
+    optional string parent_frame_id     = 3;
+    optional string frame_id            = 4;
+    optional string lidar_mode          = 5;
+    optional string points_type         = 6;
+    optional uint32 height              = 7;
+    optional uint32 width               = 8;
+    optional bool is_dense              = 9;
+    optional bool is_transform          = 10;
+    optional bool is_motion_correct     = 11;
+    repeated PointXYZIT point           = 12;
+}
+// 点云太大了，分开发。通过时间戳辨别是不是同一帧点云
+//message PointCloud{
+//    optional double       timestamp   = 1;
+//    repeated PointXYZIT  cloud       = 2;
+//}
+
+// ================= Vehicle State Message ===================//
+message VehicleStateMsg {
+    optional double timestamp                   = 1;
+    optional uint32 seq                         = 2;
+    optional string frame_id                    = 3;
+    optional string parent_frame_id             = 4;
+    optional uint32 status                      = 5;
+    optional Vector1d origin                    = 6;
+    optional Vector1d fix                       = 7;
+    optional Vector1d pos                       = 8;
+    optional Vector1d pos_cov                   = 9;
+    optional Vector1d orien                     = 10;
+    optional Vector1d orien_cov                 = 11;
+    optional Vector1d angular_vel               = 12;
+    optional Vector1d angular_vel_cov           = 13;
+    optional Vector1d linear_vel                = 14;
+    optional Vector1d linear_vel_cov            = 15;
+    optional Vector1d acc                       = 16;
+    optional Vector1d acc_cov                   = 17;
+}
+
+// ---------------------------------------------- Message Header --------------------------------------- //
+message MsgHeader {
+    optional double msgTimestamps = 1;
+    optional uint32 msgVersion = 2;
+    optional uint32 msgType = 3;
+    optional uint32 deviceId = 4;
+    optional uint32 msgFrameId = 5;
+    optional uint32 msgTotalCnt = 6;
+    optional uint32 msgLocalCnt = 7;
+    optional uint32 msgLocalLen = 8;
+    optional uint32 msgIndex = 9;
+    optional uint32 msgTotalFragment = 10;
+    optional uint32 msgFragmentIndex = 11;
+    optional uint32 msgRes0 = 12;
+    optional uint32 msgCheck16 = 13;
+}

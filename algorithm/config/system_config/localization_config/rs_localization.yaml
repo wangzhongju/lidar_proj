@@ -1,0 +1,22 @@
+common:
+  localization_mode: 0 #0: use gps 2: ust GPS coordinate 4: use xyz coordinate
+  send_localization_freq: 30   #unit: hz
+  use_fusion_cloud: true # true: use fusion cloud to do localization 
+  grid_map: localization_map.gridmap
+  rsmap: localization_map.rsmap
+  map_frame_id: map
+  pose_guess_0: 0
+  pose_guess_1: 0
+  pose_guess_2: 0
+
+Sensor_Preprocessing:
+  imu:
+    acc_ratio: 1
+    avel_ratio: 1
+  odom:
+    vel_mode: 0 # 0: local_vel, 1: global_vel
+    vel_ratio: 1
+    vel_unit: m/s # m/s, km/h, mph
+
+Default:
+  include: /system_config/localization_config/default_config/default.yaml

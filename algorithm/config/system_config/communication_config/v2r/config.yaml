@@ -1,0 +1,27 @@
+general:
+  device_id: 0
+socket: 
+  socket_address: 10.10.8.239   # 对于发送端为远端的IP, 对于接收端建议配置为0.0.0.0
+  socket_port: 60082            # 对于发送端为远端的端口, 对于接收端为监听的端口
+  socket_buffer_size: 4194304   # 默认即可
+  max_msg_size: 15360           # 不允许大于63KByte,默认为32KByte 
+  timeout_ms: 150               # 接收超时，默认150ms 
+  send_control: 
+    send_control_enable: true          # 如果发送点云时，该选项建议开启
+    send_control_thres: 262144         # 默认为256KB 
+    send_control_ms: 3                 # 默认为2ms,建议 <= 4 
+    send_control_compress_enable: true # 如果发送点云时，该选项建议开启
+  receive_control: 
+    receive_io_parallel_enable: true      # 如果发送点云，建议开启
+    receive_io_parallel_degree: 4         # 根据机器设备配置，例如4核,建议配置不超过4
+    receive_process_parallel_enable: true # 如果发送点云，建议开启
+native:
+  custom_method: RobosenseV2R
+v2r:
+   method: "TCP_SERVER"                   # "UDP_SENDER" / "TCP_CLIENT" / "TCP_SERVER"
+   version: "ROBOSENSE_V2R_V1.6"          #  Robosense V2R 版本: "ROBOSENSE_V2R_V1.4"/"ROBOSENSE_V2R_V1.5"/"ROBOSENSE_V2R_V1.6"
+   center: "CENTER"                       # "CENTER" / "ANCHOR"
+   heading:
+      velocity_heading_th: 0.5 # m/s
+      acceleration_heading_th: 0.05 # m/s^2
+      acceleration_valid: false # 

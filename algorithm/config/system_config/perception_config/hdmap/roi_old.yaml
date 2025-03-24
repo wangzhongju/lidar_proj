@@ -1,0 +1,86 @@
+rois:
+  - roi_type: 0
+    index: 2
+    filter_type: 0
+    priority: 0
+    anchors:
+      -
+        - -6.431683
+        - 4.32729
+        - 7.267253
+      -
+        - -65.70238
+        - 4.890891
+        - -0.06585191
+      -
+        - -65.72832
+        - -0.02699683
+        - -0.1117187
+      -
+        - -6.532793
+        - -0.290414
+        - 0
+    events:
+      AbnormalSwitch:
+        enable: true
+        neighborRoiIds:
+          - id: 3
+            style: 0
+        timeTh: 0
+  - index: 3
+    roi_type: 0
+    filter_type: 0
+    anchors:
+      -
+        - -6.307586
+        - 9.167004
+        - 7.792871
+      -
+        - -65.57829
+        - 9.730604
+        - 0.3937144
+      -
+        - -65.60423
+        - 5.122951
+        - -0.0816354
+      -
+        - -6.408696
+        - 4.549299
+        - 0
+    priority: 0
+    events:
+      AbnormalSwitch:
+        enable: true
+        neighborRoiIds:
+          - id: 2
+            style: 0
+        timeTh: 0
+
+  - index: 10
+    roi_type: 0
+    filter_type: 0
+    anchors:
+      - - 20.7414
+        - 5.4489
+        - -3.163988
+      - - 20.5925
+        - 25.1717
+        - -5.584425
+      - - 21.2087
+        - 25.4479
+        - -5.772866
+      - - 21.0134
+        - 5.4529
+        - -2.601596
+    priority: 1
+    events:
+      Statistical:
+        enable: true
+        timeTh: 1.345
+        statLanes:
+          - roiIdx: 2
+            laneIdx: 1
+            direction: 0 #正向lane
+          - roiIdx: 3
+            laneIdx: 3
+            direction: 1 # 反向 lane

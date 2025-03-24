@@ -1,0 +1,79 @@
+#* Preprocessing *#
+preprocessing:
+  strategy: "DramaPreprocessing"
+  DramaPreprocessing:
+    _frame_id_: ""
+    vehicle_filter:
+      enable: false
+      xmin: -1.
+      xmax: 1.
+      ymin: -1.
+      ymax: 1.
+      zmin: -1.
+      zmax: 1.
+    lidar_filter:
+      enable: false
+      xmin: -2.
+      xmax: 2.
+      ymin: -2.
+      ymax: 2.
+      zmin: -2.
+      zmax: 2.
+
+#* CnnDetection *#
+ai_detection:
+  enable: true # 是否开启该功能
+  strategy: "PolarisAiDetection"
+  PolarisAiDetection:
+    _frame_id_: ""  # 默认即可
+    _lidar_type_: ""  # 默认即可
+    use_cuda_acc: true
+    bbox_mode: "reg_box" #"tight","reg_ang","reg_box"
+    detect_range:
+      xmin: -40.
+      xmax: 40.
+      ymin: -80.
+      ymax: 0.
+      zmin: -3.
+      zmax: 3.5
+    regress_height_thd: 0.5  # 默认即可。前景栅格里，点的高度比框高+0.5高的点为背景
+    car_nms_thres: 0.1  # 默认即可。两车之间的IOU大于该阈值即被合并
+    small_obj_nms_thres: 0.3  #  默认即可。两个小物体之间的IOU大于该阈值即被合并
+    regression_box_confidence_thre: 0.0 # 预留参数，默认即可
+    min_pts_num: 3  #  默认即可。一个目标拥有的最少的点的个数
+    ground_height_thd: 1.2   #  默认即可。地面栅格中的地面点需要低于该阈值
+    ground_h_error_thd: 0.2  #  默认即可。地面栅格中，地面点与最低点的高度差需要低于该阈值
+    encrypt: true   # 预留，默认即可
+    rotate_angle: 0   # 检测范围旋转的角度
+
+#* GroundFilter *#
+ground_filter:
+  enable: false # 是否开启该功能（当AI与该模块同时开启时，该模块将失效）
+  strategy: "BearGroundFilter"
+  BearGroundFilter:
+    _frame_id_: "" # 默认即可
+    detect_range:
+      xmin: -20.
+      xmax: 20.
+      ymin: 0.
+      ymax: 50.
+      zmin: -1.
+      zmax: 1.5
+
+#* SegMentor *#
+segmentor:
+  enable: false # 是否开启该功能
+  strategy: "BearSegmentor"
+  BearSegmentor:
+    _frame_id_: ""
+    detect_range:
+      xmin: -20.
+      xmax: 20.
+      ymin: 0.
+      ymax: 50.
+      zmin: -1.
+      zmax: 2.5
+    unit_size: 0.5 # BEV栅格大小
+    seg_scan_x: 1. # 聚类生长阈值（x方向）
+    seg_scan_y: 1.
+    seg_min_pts: 5 # 每个簇中拥有的最小点个数

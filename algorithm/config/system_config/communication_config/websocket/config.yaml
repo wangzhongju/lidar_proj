@@ -1,0 +1,136 @@
+#* General *#
+general:
+  device_id: 0
+common:
+  socket_parallel_bufer_size: 2 
+  socket_listen_port: 8081 # websocket listen port
+  web_update_frame_gap: 1 # websocket update frame gap if = 5 means 2Hz
+enables:
+  object:
+    cube: true
+    box: false
+    polygon: false
+    polyhedral: false
+    tracking_point: false
+    trajectory: false
+    velocity_dir: true
+    box_info: true
+    label_info: true
+    track_info: true
+    gps_info: true
+  attention_object:
+    polygon: false
+    polyhedral: true
+  lane:
+    lanes: false
+  curb:
+    curbs: false
+  freespace:
+    freespaces: false
+  pointcloud:
+    pointclouds: true
+  map:
+    maps: false 
+  roi:
+    rois: true
+objects: # Support Object Type and Color Attribution
+    - type: unknown
+      typeid: 0
+      color: [153, 128, 153, 76]
+    - type: pedestrian
+      typeid: 1
+      color: [255, 255, 0, 76]
+    - type: bikelist
+      typeid: 2
+      color: [0, 255, 0, 76]
+    - type: car
+      typeid: 3
+      color: [0, 255, 255, 76]
+    - type: truck
+      typeid: 4
+      color: [0, 255, 255, 76]
+    - type: ultra-track
+      typeid: 5
+      color: [0, 255, 255, 76]
+attention_objects:
+  color: [255, 0, 255, 255] # attention_object颜色
+object_attachs:
+  track_points:
+    color: [0, 255, 0, 128]
+    attach_object: false # 不关联Object颜色
+  trajectory:
+    color: [255, 0, 0, 128]
+    attach_object: true # 关联物体颜色
+  label_text:
+    color: [255, 255, 255, 255]
+    attach_object: false # 白色，不关联Object颜色
+    text_size: 12
+  track_text:
+    color: [255, 255, 255, 255]
+    attach_object: false # 白色，不关联Object颜色
+    text_size: 12
+  box_text:
+    color: [255, 255, 255, 255]
+    attach_object: false # 白色，不关联Object颜色
+    text_size: 12
+  gps_text:
+    color: [255, 255, 255, 255]
+    attach_object: false # 白色，不关联Object颜色
+    text_size: 12
+  velocity_dir:
+    color: [0, 255, 0, 255]
+    attach_object: false # 不关联Object颜色
+  acc_dir:
+    color: [0, 255, 0, 255]
+    attach_object: false # 不关联Object颜色
+lanes:
+  color: [0, 255, 0, 255] # [56, 56, 56, 255]
+curbs:
+  color: [255, 0, 0, 255] # [56, 56, 56, 255]
+freespaces:
+  color: [77, 77, 77, 255]
+transform:
+  matrix: [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+lidar_grids:
+  grid_circle_ranges: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200, 250] # circle grid 的半径
+  grid_circle_color: [160, 160, 164, 255]
+pointcloud_color_map: # pointcloud color map
+  color_map_enable: true
+  color_map_type: "rviz" # "autumn"/"bone"/"jet"/"winter"/"rainbow"/"ocean"/"summer"/"spring"/"cool"/"hsv"/"pink"/"hot"/"parula"/"rviz"
+  color_map_factors: ["intensity"] # "x" / "y" / "z" / "intensity"
+  color_map_lows: [0] #
+  color_map_highs: [128] #
+  color_map_alphas: [1.0] #
+  color_map_invert: false #
+  color_map_label: false # always is false now
+  default_color: [230, 230, 230, 255]
+  point_size: 1.0
+map_color_map: # map　pointcloud color map
+  color_map_enable: true
+  color_map_type: "rviz" # "autumn"/"bone"/"jet"/"winter"/"rainbow"/"ocean"/"summer"/"spring"/"cool"/"hsv"/"pink"/"hot"/"parula"/"rviz"
+  color_map_factors: ["intensity"] # "x" / "y" / "z" / "intensity"
+  color_map_lows: [0] #
+  color_map_highs: [128] #
+  color_map_alphas: [1.0] #
+  color_map_invert: false #
+  color_map_label: false # always is false now
+  default_color: [230, 230, 230, 255]
+  point_size: 1.0
+roi_color_map:
+  - - roi_type: 0
+      filter_type: 0
+      color: [0, 0, 255, 128] #
+    - roi_type: 0
+      filter_type: 1
+      color: [0, 0, 255, 128] #
+    - roi_type: 0
+      filter_type: 2
+      color: [0, 0, 255, 128] #
+map_origin:
+  lat: 0
+  lon: 0
+  alt: 0
+fill_maps:
+  - "/home/sti/Desktop/20211008SDK_modify_sender_and_merge_communication_method/rs_sdk_3.1_release/config/system_config/communication_config/websocket/fill_maps/finalmap.pcd" # map fill path
+fill_rois:
+  - "/home/sti/Desktop/20211008SDK_modify_sender_and_merge_communication_method/rs_sdk_3.1_release/config/system_config/communication_config/websocket/fill_rois/roi.yaml" # roi fill path

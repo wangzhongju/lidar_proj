@@ -1,0 +1,16 @@
+#* General *#
+general:
+  device_id: 0
+control:
+  topic_name: "percept_topic"
+  send_control:
+    enable_parallel: true
+    parallel_buffer_size: 2  # 当enable_parallel = true时，该参数有效, 在发送点云时，建议开启
+ros:
+  send_point_cloud: false
+  send_attention_objects: false
+  send_freespace: false
+  send_lane: false
+  send_roadedge: false
+  send_sematic_indices: false
+

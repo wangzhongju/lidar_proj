@@ -1,0 +1,10 @@
+# yaml
+name: GnssObserver # observer must specify a predefined name
+type: Correction # observer type: Prediction or Correction
+
+calibration: [0,0,0]
+online: true
+
+gnss_pose_noise: 1.0 # GNSS position measurement noise (distance error)
+discard_unqualified_data: false
+gnss_failure_threshold: 10.0 # unit: sec

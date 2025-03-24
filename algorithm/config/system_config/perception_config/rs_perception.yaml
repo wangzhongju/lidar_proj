@@ -1,0 +1,111 @@
+#* General *#
+general:
+  _application_: "" # 默认即可
+  tictoc_average: true # true,false,for log average cost time
+  out_axis: "GLOBAL_AXIS" # VEHICLE_AXIS,GLOBAL_AXIS,LIDAR_AXIS for output result as vehicle_axis or global_axis
+  _base_dir_: ""
+  model: /system_config/perception_config/model  # path of model save
+
+
+calibration:
+  include: /usr_config/calibration.yaml  # path of calibration file
+
+lidar:
+  include: /system_config/perception_config/lidar/rs_lidar.yaml  # path of perception config file of lidar.
+
+camera:
+  include: /system_config/perception_config/camera/rs_camera.yaml # path of perception config file fo camera.
+
+#* HdMap *#
+hdmap:  # 事件检测功能。当usr_config.yaml中的application选择为V2r策略或Pseries时。该功能会根据下方配置进行调用。
+  enable: false  # 是否开启事件检测功能。
+  filter_obj: false  # true: 开启ROI物体过滤功能
+  event_detect: false # true: 开启ROI内事件检测功能。
+  rois:
+    include: /system_config/perception_config/hdmap/roi.yaml # roi具体配置文件存放路径。该文件由工具生成，详情联系robosense技术支持。
+
+
+#* V2rPerception *#
+V2rPerception:  # 当usr_config.yaml中的application为V2r的时候，需要配置全局pose。
+  global_pose:
+    x: 0
+    y: 0
+    z: 0
+    roll: 0
+    pitch: 0
+    yaw: -2.912802696
+  #* gps *#
+  gps: #DEFAULT
+    gps_longtitude: 29.5207701992458
+    gps_latitude: 106.291596657589
+    gps_altitude: 0
+
+#* Rviz *#
+rviz:
+  prefix: "" # DEFAULT
+  strategy: "EFFICIENT" #DEFAULT "EFFICIENT","ORIGIN"  # 两种不同的结果显示配色模式。
+  display_axis: "GLOBAL_AXIS" # "VEHICLE_AXIS", "GLOBAL_AXIS" # 结果显示基于的坐标系。
+  map:
+    - "" #DEFAULT address file for map
+    - "" #DEFAULT address file for map
+  road:
+    - "" #DEFAULT
+  frame_id: "/base_link" #DEFAULT
+  map_frame_id: "/map" #DEFAULT
+  pub_cloud_keys:  # 可供显示的点云，不需要的直接注释即可。注意缩进。
+    - "origin"  #publish origin cloud             原始点云
+    - "ground"  #publish ground cloud             地面点点云
+    - "background" #publish background cloud      背景点点云
+    - "non_ground" #publish non_ground cloud      非地面点点云
+    - "clusters" #publish clusters cloud          通过聚类得到的结果的点云
+    - "sematic" #publish sematic cloud            语义点云
+  pub_marker_keys:  # 可供显示的感知结果
+#    - "acc_dir"  #publish acc_dir marker                     目标的加速度方向
+    - "atten"  #publish attention marker                     一度目标
+    - "barrier" #pubulish barrier marker                     物理围栏
+    - "box_infos"  #publish box_infos marker                 除UNKNOWN类型以外的目标的⽬标框中⼼点距离⻋体的距离和⽬标框的size信息
+    - "box_lines"  #publish box_lines marker                 目标类型为CAR/TRACK_BUS/ULTRA_VEHICLE/BIC的目标框
+    - "cube"  #publish cube marker                           目标类型为CAR/TRACK_BUS/ULTRA_VEHICLE/BIC的目标立方体
+    - "cylinder"  #publish cylinder marker                   目标类型为PED/CONE的圆柱体
+    - "cylinder_lines"  #publish cylinder_lines marker       目标类型为PED/CONE的圆柱体框
+    - "freespace"  #publish freespace marker                 可行驶区域
+    - "gps"  #publish gps marker                             目标的GPS信息
+#    - "label_infos"  #publish label_infos marker             目标的类别信息
+#    - "lane"  #publish lane marker                           车道线
+    - "polygon"  #publish polygon marker                     目标的紧缩多边形
+    - "atten_polygon" #publish attention polygon marker      一度目标的紧缩多边形
+    - "atten_label" #publish attention label marker          一度目标的类别信息
+#    - "roadedge"  #publish roadedge marker                   路沿
+    - "track_infos"  #publish track_infos marker             目标的跟踪信息
+#    - "trajectory"  #publish trajectory marker               目标的轨迹信息
+    - "vel_dir"  #publish vel_dir marker                     速度不为0的目标的速度方向
+#    - "scene_struct_cube"  #publish scene_struct_cube        交通牌的目标立方体
+#    - "scene_struct_box_lines"  #publish scene_struct_box    交通牌的目标框
+#    - "scene_struct_info"  #publish scene_struct_info text   交通牌的类别信息
+#    - "mirror_cube"  #publish mirror cube                    镜像目标的立方体
+#    - "mirror_box_lines"  #publish mirror box                镜像目标的目标框
+
+#* SaveResult *#
+save_result: #DEFAULT   是否保存SDK产生的结果
+  enable: false #DEFAULT  true表示保存
+  save_percept_result: true #DEFAULT  保存感知结果
+  save_pcd: true #DEFAULT 保存PCD文件
+  save_dir: "/media/sti/1TB-HDD/Tmp/save" #DEFAULT  保存路径，需确保存在。
+
+#* auto_align *#
+auto_align:  #雷达标平
+  max_range_x: 20.
+  min_range_x: 2.
+  max_range_y: 10.
+  min_range_y: -10.
+  min_hight: -2.5
+  max_hight: 2
+  plane_fit_max_distance: 0.05
+  update_calibration_file: true  # 是否自动更新标定文件
+  calibration_path: "/config/usr_config/calibration.yaml"  #标定文件保存路径（需保证文件是存在的）
+  main_frame_id: "/middle_lidar"  # 标定数据的main_frame_id
+
+
+
+
+

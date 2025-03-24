@@ -1,0 +1,15 @@
+#@brief: common parameters for Gnss message
+common:
+  msg_source: 2           #@type: int  @detail: 0--not use Gnss, 1--message come from sensor driver, 2--message come from ROS
+  send_msg_ros: false     #@type: bool @detail: if true, the original Gnss message will be sent out through ROS
+
+#@brief: config file for sensor driver 
+driver:
+  include: /system_config/sensor_config/other_sensors/ins/ins_XWG13668.yaml
+
+#@brief: configration for ROS
+ros:
+  ros_recv_topic: /fix      
+  ros_send_topic: /navsat/fix
+
+
