@@ -78,6 +78,7 @@ function app_run() {
     if rosnode list | grep -q "$node_name"; then
         echo "Node $node_name 已经存在，跳过启动程序"
     else
+        cd /workspace/algorithm
         echo "Node $node_name 不存在，启动程序"
         ./build/demo/rs_sdk_demo
     fi
