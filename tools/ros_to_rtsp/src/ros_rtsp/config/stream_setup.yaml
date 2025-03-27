@@ -2,10 +2,17 @@
 port: "8554"
 streams: # Cannot rename - must leave this as is.
 
-  stream-yay:
+  stream-1:
     type: topic
     source: /camera_30/image_raw
-    mountpoint: /back
+    mountpoint: /back1
+    caps: video/x-raw,framerate=10/1,width=1920,height=1080
+    bitrate: 500
+
+  stream-2:
+    type: topic
+    source: /camera_30/image_raw
+    mountpoint: /back2
     caps: video/x-raw,framerate=10/1,width=1920,height=1080
     bitrate: 500
 
