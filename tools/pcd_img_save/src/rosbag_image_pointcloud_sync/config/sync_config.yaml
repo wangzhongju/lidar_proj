@@ -1,0 +1,19 @@
+# 图像话题列表
+image_topics:
+  - "/camera_68/image_raw/compressed"
+  - "/camera_69/image_raw/compressed"
+  - "/camera_70/image_raw/compressed"
+  - "/camera_76/image_raw/compressed"
+  - "/camera_77/image_raw/compressed"
+
+# 点云话题列表
+pointcloud_topics:
+  - "/64/rslidar_points"
+  - "/65/rslidar_points"
+  - "/66/rslidar_points"
+
+# 保存间隔(秒)
+save_interval: 3.0
+
+# 输出目录
+output_directory: "/workspace/tools/pcd_img_save/data"

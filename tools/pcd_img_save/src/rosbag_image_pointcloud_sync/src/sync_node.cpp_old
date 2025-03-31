@@ -1,0 +1,180 @@
+#include "sync_node.h"
+#include <iostream>
+#include <fstream>
+#include <chrono>
+#include <limits>
+#include <opencv2/opencv.hpp>
+
+SyncNode::SyncNode(ros::NodeHandle& nh) : nh_(nh) {
+  // 获取参数
+  nh_.param("save_interval", save_interval_, 0.5);
+  nh_.param("output_directory", output_directory_, std::string("/tmp/sync_output"));
+
+  // 获取多个图像话题和点云话题
+  nh_.getParam("image_topics", image_topics_);
+  nh_.getParam("pointcloud_topics", pointcloud_topics_);
+
+  // 为每个图像和点云话题创建订阅器
+  for (const auto& topic : image_topics_) {
+    image_subs_[topic] = nh_.subscribe(topic, 1, &SyncNode::imageCallback, this);
+  }
+  for (const auto& topic : pointcloud_topics_) {
+    pointcloud_subs_[topic] = nh_.subscribe(topic, 1, &SyncNode::pointcloudCallback, this);
+  }
+
+//   for (const auto& topic : image_topics_) {
+//     image_subs_[topic] = nh_.subscribe(topic, 1, 
+//         std::bind(&SyncNode::imageCallback, this, _1, topic));
+//   }
+//   for (const auto& topic : pointcloud_topics_) {
+//     pointcloud_subs_[topic] = nh_.subscribe(topic, 1, 
+//         std::bind(&SyncNode::pointcloudCallback, this, _1, topic));
+//   }
+
+//   for (const auto& topic : image_topics_) {
+//     image_subs_[topic] = nh_.subscribe(topic, 1, 
+//       [this, topic](const sensor_msgs::CompressedImageConstPtr& msg) {
+//         this->imageCallback(msg, topic); // 在这里传递topic
+//       });
+//   }
+//   for (const auto& topic : pointcloud_topics_) {
+//     pointcloud_subs_[topic] = nh_.subscribe(topic, 1, 
+//       [this, topic](const sensor_msgs::PointCloud2ConstPtr& msg) {
+//         this->pointcloudCallback(msg, topic); // 在这里传递topic
+//       });
+//   }
+}
+
+void SyncNode::imageCallback(const sensor_msgs::CompressedImageConstPtr& msg) {
+  std::string topic = msg->header.frame_id;
+  last_images_[topic] = msg;
+  processData();
+}
+
+void SyncNode::pointcloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg) {
+  std::string topic = msg->header.frame_id;
+  last_pointclouds_[topic] = msg;
+  processData();
+}
+
+// void SyncNode::imageCallback(const sensor_msgs::CompressedImageConstPtr& msg, const std::string& topic) {
+//   std::string topic = msg->header.frame_id;
+//   last_images_[topic] = msg;
+//   processData();
+// }
+
+// void SyncNode::pointcloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg, const std::string& topic) {
+//   std::string topic = msg->header.frame_id;
+//   last_pointclouds_[topic] = msg;
+//   processData();
+// }
+
+void SyncNode::processData() {
+  // 检查所有图像和点云话题是否都有数据
+//   if (last_images_.size() != image_topics_.size() || last_pointclouds_.size() != pointcloud_topics_.size()) {
+  if (last_images_.empty() || last_pointclouds_.empty()) {
+    // ROS_WARN("empty data...");
+    return;  // 如果数据未完全准备好，返回
+  }
+
+  // 计算所有图像和点云之间的时间差
+  std::map<std::string, ros::Time> image_times;
+  std::map<std::string, ros::Time> pointcloud_times;
+  for (const auto& entry : last_images_) {
+    image_times[entry.first] = entry.second->header.stamp;
+  }
+  for (const auto& entry : last_pointclouds_) {
+    pointcloud_times[entry.first] = entry.second->header.stamp;
+  }
+
+  // 找到最小时间差
+  double min_time_diff = std::numeric_limits<double>::max();
+  std::string best_image_topic, best_pointcloud_topic;
+  for (const auto& image_entry : image_times) {
+    for (const auto& pc_entry : pointcloud_times) {
+      double time_diff = abs((image_entry.second - pc_entry.second).toSec());
+      if (time_diff < min_time_diff) {
+        min_time_diff = time_diff;
+        best_image_topic = image_entry.first;
+        best_pointcloud_topic = pc_entry.first;
+      }
+    }
+  }
+
+  // 如果最小时间差小于设定的间隔，则保存数据
+  if (min_time_diff < save_interval_) {
+    saveData(best_image_topic, best_pointcloud_topic);
+    // 清空已保存的数据
+    last_images_.erase(best_image_topic);
+    last_pointclouds_.erase(best_pointcloud_topic);
+  }
+}
+
+// void SyncNode::saveData(const std::string& image_topic, const std::string& pointcloud_topic) {
+//   // 保存图像
+//   try {
+//     const sensor_msgs::CompressedImageConstPtr& image = last_images_[image_topic];
+//     cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::BGR8);  // 解码压缩图像
+//     std::string image_filename = output_directory_ + "/image_" + std::to_string(image->header.stamp.toSec()) + ".png";
+//     cv::imwrite(image_filename, cv_ptr->image);
+//     ROS_INFO("Saved image: %s", image_filename.c_str());
+//   } catch (cv_bridge::Exception& e) {
+//     ROS_ERROR("Could not convert image: %s", e.what());
+//   }
+
+//   // 保存点云
+//   const sensor_msgs::PointCloud2ConstPtr& pointcloud = last_pointclouds_[pointcloud_topic];
+//   pcl::PointCloud<pcl::PointXYZ> cloud;
+//   pcl::fromROSMsg(*pointcloud, cloud);
+//   std::string pointcloud_filename = output_directory_ + "/cloud_" + std::to_string(pointcloud->header.stamp.toSec()) + ".pcd";
+//   pcl::io::savePCDFileBinary(pointcloud_filename, cloud);
+//   ROS_INFO("Saved pointcloud: %s", pointcloud_filename.c_str());
+// }
+
+void SyncNode::saveData(const std::string& image_topic, const std::string& pointcloud_topic) {
+  // 获取时间戳
+  ros::Time image_time = last_images_[image_topic]->header.stamp;
+  ros::Time pointcloud_time = last_pointclouds_[pointcloud_topic]->header.stamp;
+
+  // 为每个话题创建独立的文件夹
+  std::string image_folder = output_directory_ + "/" + image_topic.substr(1);  // 去除话题前缀“/”
+  std::string pointcloud_folder = output_directory_ + "/" + pointcloud_topic.substr(1);  // 同样去除话题前缀“/”
+  
+  // 创建文件夹
+  if (mkdir(image_folder.c_str(), 0777) == -1 && errno != EEXIST) {
+    ROS_ERROR("Failed to create directory: %s", image_folder.c_str());
+    return;
+  }
+  if (mkdir(pointcloud_folder.c_str(), 0777) == -1 && errno != EEXIST) {
+    ROS_ERROR("Failed to create directory: %s", pointcloud_folder.c_str());
+    return;
+  }
+
+  // 保存图像
+  try {
+    const sensor_msgs::CompressedImageConstPtr& image = last_images_[image_topic];
+    cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::BGR8);  // 解码压缩图像
+    std::string image_filename = image_folder + "/image_" + std::to_string(pointcloud_time.toSec()) + ".png";
+    cv::imwrite(image_filename, cv_ptr->image);
+    ROS_INFO("Saved image: %s", image_filename.c_str());
+  } catch (cv_bridge::Exception& e) {
+    ROS_ERROR("Could not convert image: %s", e.what());
+  }
+
+  // 保存点云
+  const sensor_msgs::PointCloud2ConstPtr& pointcloud = last_pointclouds_[pointcloud_topic];
+  pcl::PointCloud<pcl::PointXYZ> cloud;
+  pcl::fromROSMsg(*pointcloud, cloud);
+  std::string pointcloud_filename = pointcloud_folder + "/cloud_" + std::to_string(pointcloud_time.toSec()) + ".pcd";
+  pcl::io::savePCDFileBinary(pointcloud_filename, cloud);
+  ROS_INFO("Saved pointcloud: %s", pointcloud_filename.c_str());
+}
+
+
+int main(int argc, char** argv) {
+  ros::init(argc, argv, "sync_node");
+  ros::NodeHandle nh;
+  SyncNode sync_node(nh);
+  ros::spin();
+  return 0;
+}

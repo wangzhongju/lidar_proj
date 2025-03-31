@@ -1,0 +1,16 @@
+<launch>
+    <!-- 同步节点启动文件 -->
+    <arg name="config_file" default="$(find rosbag_image_pointcloud_sync)/config/sync_config.yaml"/>
+    <arg name="output_dir" default="/tmp/sync_output"/>
+    <arg name="save_interval" default="1.0"/>
+    
+    <!-- 加载参数到私有命名空间 -->
+    <group ns="sync_node">
+        <rosparam command="load" file="$(arg config_file)"/>
+        <!-- <param name="output_directory" value="$(arg output_dir)"/>
+        <param name="save_interval" value="$(arg save_interval)"/> -->
+    </group>
+    
+    <!-- 启动同步节点 -->
+    <node name="sync_node" pkg="rosbag_image_pointcloud_sync" type="sync_node" output="screen"/>
+</launch>

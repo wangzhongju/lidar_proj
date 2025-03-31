@@ -1,0 +1,11 @@
+<launch>
+  <param name="image_topics" value="['/camera/image', '/camera2/image']" />
+  <param name="pointcloud_topics" value="['/camera/pointcloud', '/camera2/pointcloud']" />
+  <param name="save_interval" value="0.5" />
+  <param name="output_directory" value="/tmp/sync_output" />
+
+  <node name="sync_image_pointcloud" pkg="rosbag_image_pointcloud_sync" type="sync_node" output="screen">
+    <param name="image_topics" value="/camera1/image_raw,/camera2/image_raw" />
+    <param name="pointcloud_topics" value="/camera1/pointcloud,/camera2/pointcloud" />
+  </node>
+</launch>

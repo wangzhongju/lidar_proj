@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>rosbag_image_pointcloud_sync</name>
+  <version>0.1.0</version>
+  <description>Synchronize and save multiple camera images and pointclouds</description>
+
+  <maintainer email="your.email@example.com">Your Name</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+  <depend>cv_bridge</depend>
+  <depend>pcl_ros</depend>
+  <depend>pcl_conversions</depend>
+
+  <build_depend>OpenCV</build_depend>
+  <build_depend>pcl</build_depend>
+
+  <exec_depend>OpenCV</exec_depend>
+  <exec_depend>pcl</exec_depend>
+</package>
