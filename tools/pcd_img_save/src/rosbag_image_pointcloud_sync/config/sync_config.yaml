@@ -13,7 +13,7 @@ pointcloud_topics:
   - "/66/rslidar_points"
 
 # 保存间隔(秒)
-save_interval: 3.0
+save_interval: 1.0
 
 # 输出目录
 output_directory: "/workspace/tools/pcd_img_save/data"

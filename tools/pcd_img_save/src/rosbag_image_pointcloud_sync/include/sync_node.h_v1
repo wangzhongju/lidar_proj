@@ -23,8 +23,7 @@ private:
     void imageCallback(const sensor_msgs::CompressedImageConstPtr& msg, const std::string& topic);
     void pointcloudCallback(const sensor_msgs::PointCloud2ConstPtr& msg, const std::string& topic);
     void checkAndSave();
-    void saveData_img(const std::string& image_topic, const ros::Time& data_time);
-    void saveData_pc(const std::string& pointcloud_topic, const ros::Time& data_time);
+    void saveData(const std::string& image_topic, const std::string& pointcloud_topic);
     std::string extractCameraName(const std::string& topic);
     bool createDirectoryRecursive(const std::string& path);
     
@@ -39,6 +38,7 @@ private:
     std::string output_directory_;
     double save_interval_;
     double last_save_time_;
+    double max_time_diff_;
     
     std::mutex data_mutex_;
 };

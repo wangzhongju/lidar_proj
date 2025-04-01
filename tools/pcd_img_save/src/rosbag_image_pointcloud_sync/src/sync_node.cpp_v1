@@ -6,6 +6,7 @@ SyncNode::SyncNode(ros::NodeHandle& nh) : nh_(nh), last_save_time_(0) {
     // 获取参数
     nh_.param("save_interval", save_interval_, 1.0);
     nh_.param("output_directory", output_directory_, std::string("/tmp/sync_output"));
+    nh_.param("max_time_diff", max_time_diff_, 0.1);  // 新增最大时间差参数
 
     // 获取多个图像话题和点云话题
     nh_.getParam("image_topics", image_topics_);
@@ -58,17 +59,95 @@ void SyncNode::checkAndSave() {
     }
     ROS_INFO("SIZE: last_images_->%d, last_pointclouds_->%d", last_images_.size(), last_pointclouds_.size());
 
-    ros::Time pointcloud_time = last_pointclouds_[pointcloud_topics_[0]]->header.stamp;
-
+    // 获取所有消息的时间戳
+    std::vector<ros::Time> image_times;
     for (const auto& img : last_images_) {
-        saveData_img(img.first, pointcloud_time);
+        image_times.push_back(img.second->header.stamp);
     }
+    
+    std::vector<ros::Time> pc_times;
     for (const auto& pc : last_pointclouds_) {
-        saveData_pc(pc.first, pointcloud_time);
+        pc_times.push_back(pc.second->header.stamp);
     }
-    // 清除已保存的数据
-    last_images_.clear();
-    last_pointclouds_.clear();
+
+    // 找到时间最接近的一组数据
+    double min_max_diff = std::numeric_limits<double>::max();
+    std::vector<ros::Time> best_image_times;
+    ros::Time best_pc_time;
+    
+    // 遍历所有点云时间戳，寻找与图像时间戳最匹配的一组
+    for (const auto& pc_time : pc_times) {
+        std::vector<ros::Time> current_image_times;
+        double current_max_diff = 0.0;
+        bool valid = true;
+        
+        // 检查每个图像时间戳与当前点云时间戳的差异
+        for (const auto& img_time : image_times) {
+            double diff = fabs((img_time - pc_time).toSec());
+            if (diff > max_time_diff_) {
+                valid = false;
+                break;
+            }
+            current_max_diff = std::max(current_max_diff, diff);
+            current_image_times.push_back(img_time);
+        }
+        
+        if (valid && current_max_diff < min_max_diff) {
+            min_max_diff = current_max_diff;
+            best_image_times = current_image_times;
+            best_pc_time = pc_time;
+        }
+    }
+
+    // 如果找到合适的时间匹配，保存数据
+    if (!best_image_times.empty()) {
+        // 找到对应的消息
+        std::map<std::string, sensor_msgs::CompressedImageConstPtr> matched_images;
+        std::map<std::string, sensor_msgs::PointCloud2ConstPtr> matched_pointclouds;
+        
+        // 匹配图像
+        for (const auto& img : last_images_) {
+            for (const auto& best_time : best_image_times) {
+                if (img.second->header.stamp == best_time) {
+                    matched_images[img.first] = img.second;
+                    break;
+                }
+            }
+        }
+        
+        // 匹配点云
+        for (const auto& pc : last_pointclouds_) {
+            if (pc.second->header.stamp == best_pc_time) {
+                matched_pointclouds[pc.first] = pc.second;
+                break;
+            }
+        }
+        
+        // 保存匹配的数据
+        if (matched_images.size() == image_topics_.size() && !matched_pointclouds.empty()) {
+            for (const auto& img : matched_images) {
+                // 为每个图像找到时间最接近的点云
+                double min_diff = std::numeric_limits<double>::max();
+                std::string best_pc_topic;
+                
+                for (const auto& pc : matched_pointclouds) {
+                    double diff = fabs((img.second->header.stamp - pc.second->header.stamp).toSec());
+                    if (diff < min_diff) {
+                        min_diff = diff;
+                        best_pc_topic = pc.first;
+                    }
+                }
+                
+                if (min_diff <= max_time_diff_) {
+                    saveData(img.first, best_pc_topic);
+                }
+            }
+            
+            // 清除已保存的数据
+            last_images_.clear();
+            last_pointclouds_.clear();
+        }
+    }
 
     last_save_time_ = now.toSec();
 }
@@ -119,52 +198,42 @@ bool SyncNode::createDirectoryRecursive(const std::string& path) {
     return true;
 }
 
-void SyncNode::saveData_img(const std::string& image_topic, const ros::Time& pointcloud_time) {
+void SyncNode::saveData(const std::string& image_topic, const std::string& pointcloud_topic) {
     // 1. 验证输入
-    if (last_images_.find(image_topic) == last_images_.end()) {
+    if (last_images_.find(image_topic) == last_images_.end() || 
+        last_pointclouds_.find(pointcloud_topic) == last_pointclouds_.end()) {
         ROS_ERROR("Attempted to save non-existent data");
         return;
     }
 
     // 2. 创建目录
     std::string img_cam_name = extractCameraName(image_topic);
+    std::string pc_cam_name = extractCameraName(pointcloud_topic);
+    
     std::string img_dir = output_directory_ + "/images/" + img_cam_name;
+    std::string pc_dir = output_directory_ + "/pointclouds/" + pc_cam_name;
+
+    // if (mkdir(img_dir.c_str(), 0777) == -1 && errno != EEXIST) {
+    //     ROS_ERROR("Failed to create image directory: %s", img_dir.c_str());
+    //     return;
+    // }
+    // if (mkdir(pc_dir.c_str(), 0777) == -1 && errno != EEXIST) {
+    //     ROS_ERROR("Failed to create pointcloud directory: %s", pc_dir.c_str());
+    //     return;
+    // }
 
     // 递归创建目录
     if (!createDirectoryRecursive(img_dir)) {
         ROS_ERROR("Failed to create image directory: %s", img_dir.c_str());
         return;
     }
-
-    // 保存图像
-    try {
-        auto img_msg = last_images_[image_topic];
-        cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(img_msg, sensor_msgs::image_encodings::BGR8);
-        std::string img_filename = img_dir + "/" + std::to_string(pointcloud_time.toSec()) + ".png";
-        cv::imwrite(img_filename, cv_ptr->image);
-        ROS_INFO("Successfully Saved image: %s", img_filename.c_str());
-    } catch (const std::exception& e) {
-        ROS_ERROR("Image save error: %s", e.what());
-    }
-}
-
-void SyncNode::saveData_pc(const std::string& pointcloud_topic, const ros::Time& pointcloud_time) {
-    // 1. 验证输入
-    if (last_pointclouds_.find(pointcloud_topic) == last_pointclouds_.end()) {
-        ROS_ERROR("Attempted to save non-existent data");
-        return;
-    }
-
-    // 2. 创建目录
-    std::string pc_cam_name = extractCameraName(pointcloud_topic);
-    std::string pc_dir = output_directory_ + "/pointclouds/" + pc_cam_name;
     if (!createDirectoryRecursive(pc_dir)) {
         ROS_ERROR("Failed to create pointcloud directory: %s", pc_dir.c_str());
         return;
     }
 
     // 3. 保存点云
-    // ros::Time pointcloud_time = last_pointclouds_[pointcloud_topic]->header.stamp;
+    ros::Time pointcloud_time = last_pointclouds_[pointcloud_topic]->header.stamp;
     try {
         auto pc_msg = last_pointclouds_[pointcloud_topic];
         
@@ -206,6 +275,28 @@ void SyncNode::saveData_pc(const std::string& pointcloud_topic, const ros::Time&
     } catch (const std::exception& e) {
         ROS_ERROR("Pointcloud save exception: %s", e.what());
         return;
+    }
+
+    // 保存图像
+    try {
+        auto img_msg = last_images_[image_topic];
+        cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(img_msg, sensor_msgs::image_encodings::BGR8);
+        
+        // std::ostringstream img_filename;
+        // img_filename << img_dir << "/" 
+        //             << std::setfill('0') << std::setw(10) 
+        //             << (int)img_msg->header.stamp.toSec() 
+        //             << "_" << std::setw(9) 
+        //             << (int)(img_msg->header.stamp.toNSec() % 1000000000) 
+        //             << ".png";
+        // cv::imwrite(img_filename.str(), cv_ptr->image);
+        // ROS_INFO("Saved image: %s", img_filename.str().c_str());
+
+        std::string img_filename = img_dir + "/" + std::to_string(pointcloud_time.toSec()) + ".png";
+        cv::imwrite(img_filename, cv_ptr->image);
+        ROS_INFO("Successfully Saved image: %s", img_filename.c_str());
+    } catch (const std::exception& e) {
+        ROS_ERROR("Image save error: %s", e.what());
     }
 }
 
