@@ -1,0 +1,27 @@
+topic_list:
+  - name: /75/rslidar_points
+    transform:
+      x: 0
+      y: 0
+      z: 12.052
+      roll: 0.01972222109
+      pitch: 0.33265976458
+      yaw: 0.0445058971500002
+  - name: /76/rslidar_points
+    transform:
+      x: 29.456403127624
+      y: 0.087572687350
+      z: 12.228481747943
+      roll: -0.023391806717
+      pitch: 0.239413260554
+      yaw: -3.056680316973
+  - name: /77/rslidar_points
+    transform:
+      x: 29.387925414212
+      y: 0.381070963711
+      z: 11.915161521116
+      roll: 3.044851155016
+      pitch: -0.067629748358
+      yaw: -1.492195799552
+
+step: 5
